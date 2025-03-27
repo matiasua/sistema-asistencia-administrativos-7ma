@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Asistencia Administrativa Septima Cia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Fonts: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Flatpickr (estilos) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <style>
+    /* Fondo con degradado */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #74ebd5, #ACB6E5);
+      /* Puedes cambiar los colores del degradado si lo deseas */
+    }
+
+    /* Contenedor principal */
+    .container {
+      max-width: 500px;
+      margin: 50px auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      font-weight: 500;
+    }
+
+    /* Etiquetas y campos */
+    label {
+      display: block;
+      margin-top: 15px;
+      color: #555;
+      font-weight: 500;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+
+    /* Grupo de radio */
+    .radio-group {
+      margin-top: 5px;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+    }
+
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      color: #555;
+      font-weight: normal;
+    }
+
+    .radio-group input {
+      margin-right: 5px;
+    }
+
+    /* Botón principal */
+    button[type="submit"] {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-top: 25px;
+      border: none;
+      background: #007bff;
+      color: #fff;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background: #0056b3;
+    }
+
+    /* Modal de confirmación de éxito */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 6px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .close:hover {
+      color: #000;
+    }
+
+    /* Botón de compartir por WhatsApp */
+    #shareBtn {
+      margin-top: 20px;
+      background: #25D366;
+      border: none;
+      color: #fff;
+      padding: 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      transition: background 0.3s ease;
+    }
+
+    #shareBtn:hover {
+      background: #1ebe5d;
+    }
+
+    /* Mensaje al pie del modal */
+    .info-message {
+      margin-top: 15px;
+      color: #555;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .info-message strong {
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Registro de Asistencia Administrativa Septima Cia</h1>
+    <form id="registroForm" action="/registro" method="post">
+
+      <label for="nombre">Nombre:</label>
+      <input type="text" name="nombre" required>
+
+      <label for="tipo_labor">Tipo de Labor:</label>
+      <input type="text" name="tipo_labor" required>
+
+      <!-- Campos con Flatpickr -->
+      <label for="fecha_hora_ingreso">Fecha y Hora de Ingreso:</label>
+      <input type="text" id="fecha_hora_ingreso" name="fecha_hora_ingreso" required>
+
+      <label for="fecha_hora_salida">Fecha y Hora de Salida:</label>
+      <input type="text" id="fecha_hora_salida" name="fecha_hora_salida">
+
+      <label>¿Te agregaste en el sistema viper en el cuartel 7ma?</label>
+      <div class="radio-group">
+        <label><input type="radio" name="viper_cuartel" value="si" required> Sí</label>
+        <label><input type="radio" name="viper_cuartel" value="no"> No</label>
+      </div>
+
+      <button type="submit">Registrar</button>
+    </form>
+  </div>
+
+  <!-- Modal para la confirmación de registro -->
+  <div id="successModal" class="modal">
+    <div class="modal-content" id="modalContent">
+      <span class="close" id="modalClose">&times;</span>
+      <h2>Registro Exitoso</h2>
+      <div id="modalBody"></div>
+      <!-- Botón para compartir por WhatsApp -->
+      <button id="shareBtn">Compartir por WhatsApp</button>
+      <p class="info-message">
+        <strong>Esta información debe ser enviada a los ayudantes o al grupo de WhatsApp de asistencia para mantener un
+          control.
+          De no ser enviada ni registrada la asistencia, no será considerada.</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- Flatpickr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+
+  <script>
+    // Inicializar Flatpickr para Ingreso
+    flatpickr("#fecha_hora_ingreso", {
+      enableTime: true,
+      dateFormat: "Y-m-d\\TH:i",
+      time_24hr: true,
+      locale: "es"
+    });
+
+    // Inicializar Flatpickr para Salida
+    flatpickr("#fecha_hora_salida", {
+      enableTime: true,
+      dateFormat: "Y-m-d\\TH:i",
+      time_24hr: true,
+      locale: "es"
+    });
+
+    // Envío del formulario mediante fetch
+    document.getElementById('registroForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+
+      fetch(form.action, {
+        method: form.method,
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          // Crear un resumen del registro
+          let resumen = '<p><strong>ID de Registro:</strong> ' + data.registro_id + '</p>';
+          resumen += '<p><strong>Nombre:</strong> ' + formData.get('nombre') + '</p>';
+          resumen += '<p><strong>Tipo de Labor:</strong> ' + formData.get('tipo_labor') + '</p>';
+          resumen += '<p><strong>Fecha y Hora de Ingreso:</strong> ' + formData.get('fecha_hora_ingreso') + '</p>';
+          if (formData.get('fecha_hora_salida')) {
+            resumen += '<p><strong>Fecha y Hora de Salida:</strong> ' + formData.get('fecha_hora_salida') + '</p>';
+          }
+          resumen += '<p><strong>Viper Cuartel 7ma:</strong> ' + (formData.get('viper_cuartel') === 'si' ? 'Sí' : 'No') + '</p>';
+
+          document.getElementById('modalBody').innerHTML = resumen;
+          // Mostrar el modal
+          document.getElementById('successModal').style.display = 'block';
+          // Limpiar el formulario (opcional)
+          form.reset();
+        })
+        .catch(error => {
+          console.error('Error al registrar:', error);
+        });
+    });
+
+    // Cerrar el modal al hacer clic en la "x"
+    document.getElementById('modalClose').addEventListener('click', function () {
+      document.getElementById('successModal').style.display = 'none';
+    });
+
+    // Cerrar el modal si se hace clic fuera del contenido
+    window.addEventListener('click', function (e) {
+      if (e.target === document.getElementById('successModal')) {
+        document.getElementById('successModal').style.display = 'none';
+      }
+    });
+
+    // Funcionalidad para compartir por WhatsApp
+    document.getElementById('shareBtn').addEventListener('click', function () {
+      // Se genera un resumen en texto para compartir
+      const modalText = document.getElementById('modalBody').innerText;
+      const shareText = 'Registro de Asistencia:\n' + modalText;
+      // Genera la URL de WhatsApp
+      const whatsappUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(shareText);
+      // Redirige al usuario a WhatsApp
+      window.location.href = whatsappUrl;
+    });
+  </script>
+</body>
+
+</html>

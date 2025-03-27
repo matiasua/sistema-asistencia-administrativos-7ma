@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.env
+venv/
+*.sqlite3
+migrations/versions/
+postgres_data/
+*.log
+.DS_Store
+*.pem
+*.pub
+*.key

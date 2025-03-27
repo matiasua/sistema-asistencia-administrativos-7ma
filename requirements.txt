@@ -1,0 +1,10 @@
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Login
+psycopg2-binary
+openpyxl
+weasyprint
+flask_bcrypt
+gunicorn
+python-dotenv

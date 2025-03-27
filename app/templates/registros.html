@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Listado de Registros de Asistencia Administrativa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Fonts: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome para iconos -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"
+    integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    /* =====================
+       ESTILOS GENERALES
+       ===================== */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #74ebd5, #ACB6E5);
+    }
+
+    .container {
+      width: 95%;
+      max-width: 1000px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .header-bar h1 {
+      color: #333;
+      font-weight: 500;
+      font-size: 1.6rem;
+      margin: 0;
+    }
+
+    .header-bar a.logout-link {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .header-bar a.logout-link:hover {
+      color: #0056b3;
+    }
+
+    .export-buttons {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .export-buttons button {
+      padding: 10px 15px;
+      border: none;
+      background: #28a745;
+      color: #fff;
+      font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .export-buttons button:hover {
+      background: #218838;
+    }
+
+    /* =====================
+       FILTROS
+       ===================== */
+    .filter-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 25px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .filter-form label {
+      font-weight: 500;
+      color: #555;
+    }
+
+    .filter-form input[type="text"],
+    .filter-form input[type="month"] {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+
+    .filter-form input[type="text"]:focus,
+    .filter-form input[type="month"]:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+
+    .filter-form button {
+      padding: 10px 15px;
+      border: none;
+      background: #007bff;
+      color: #fff;
+      font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .filter-form button:hover {
+      background: #0056b3;
+    }
+
+    #clearFilters {
+      background: #6c757d;
+    }
+
+    #clearFilters:hover {
+      background: #5a6268;
+    }
+
+    /* =====================
+       TABLA
+       ===================== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      background: #fff;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    th {
+      background: #007bff;
+      color: #fff;
+      font-weight: 500;
+    }
+
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    /* =====================
+       ACCIONES
+       ===================== */
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-approve,
+    .btn-disapprove,
+    .btn-delete {
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 10px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-size: 14px;
+      transition: background 0.3s ease;
+    }
+
+    .brand-new {
+      background-color: #343a40;
+      opacity: 1;
+    }
+
+    .btn-approve.active {
+      background-color: #28a745;
+      opacity: 1;
+    }
+
+    .btn-disapprove.inactive {
+      background-color: #6c757d;
+      opacity: 0.3;
+    }
+
+    .btn-disapprove.active {
+      background-color: #6c757d;
+      opacity: 1;
+    }
+
+    .btn-approve.inactive {
+      background-color: #28a745;
+      opacity: 0.3;
+    }
+
+    .btn-delete {
+      background-color: #dc3545;
+    }
+
+    .btn-delete:hover {
+      background-color: #c82333;
+    }
+
+    /* =====================
+       CONTENEDOR INFERIOR (Selector + paginación)
+       ===================== */
+    .bottom-bar {
+      display: flex;
+      align-items: center;
+      position: relative;
+      margin-bottom: 10px;
+      padding: 0 10px;
+    }
+
+    .per-page-select {
+      margin-right: auto;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .pagination-container {
+      margin: 0 auto;
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pagination-container a,
+    .pagination-container span {
+      margin: 0 5px;
+      text-decoration: none;
+      color: #007bff;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .pagination-container a:hover {
+      color: #0056b3;
+    }
+
+    .pagination-container span {
+      color: #555;
+    }
+
+    /* =====================
+       RESPONSIVO (versión "card")
+       ===================== */
+    @media (max-width: 600px) {
+      thead tr {
+        display: none;
+      }
+
+      table,
+      thead,
+      tbody,
+      th,
+      td,
+      tr {
+        display: block;
+        width: 100%;
+      }
+
+      tbody tr {
+        margin-bottom: 15px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+      }
+
+      tbody tr td {
+        display: flex;
+        padding: 5px 0;
+      }
+
+      tbody tr td::before {
+        content: attr(data-label);
+        font-weight: 500;
+        margin-right: 8px;
+        width: 120px;
+        flex-shrink: 0;
+        color: #333;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+    }
+
+    /* =====================
+       MODAL DE CONFIRMACIÓN
+       ===================== */
+    #confirmModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 9999;
+    }
+
+    #confirmModal .modal-content {
+      background: #fff;
+      width: 90%;
+      max-width: 400px;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 5px;
+      position: relative;
+    }
+
+    #confirmMessage {
+      margin-bottom: 20px;
+      color: #333;
+      font-weight: 400;
+    }
+
+    #confirmButtons {
+      text-align: right;
+    }
+
+    #confirmButtons button {
+      margin-left: 10px;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s ease;
+    }
+
+    #confirmYes {
+      background: #28a745;
+      color: #fff;
+    }
+
+    #confirmYes:hover {
+      background: #218838;
+    }
+
+    #confirmNo {
+      background: #007bff;
+      color: #fff;
+    }
+
+    #confirmNo:hover {
+      background: #0056b3;
+    }
+
+    /* =====================
+       TOAST
+       ===================== */
+    #toast {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #28a745;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      display: none;
+      z-index: 9999;
+      transition: opacity 0.3s ease;
+    }
+
+    /* =====================
+       MODAL DE MENSAJES
+       ===================== */
+    #messageModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 99999;
+    }
+
+    #messageModal .modal-content {
+      background: #fff;
+      width: 90%;
+      max-width: 400px;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 5px;
+      position: relative;
+    }
+
+    #messageClose {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 18px;
+      color: #999;
+      transition: color 0.2s ease;
+    }
+
+    #messageClose:hover {
+      color: #333;
+    }
+
+    #messageTitle {
+      margin: 0;
+      padding: 0;
+      font-weight: 500;
+      font-size: 1.2rem;
+      color: #333;
+    }
+
+    #messageBody {
+      margin-top: 10px;
+      color: #333;
+      font-weight: 400;
+    }
+
+    #messageOkBtn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px;
+      width: 100%;
+      margin-top: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s ease;
+    }
+
+    #messageOkBtn:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Toast Container -->
+  <div id="toast">
+    <span id="toastMessage"></span>
+  </div>
+
+  <div class="container">
+    <!-- Barra superior con Cerrar Sesión -->
+    <div class="header-bar">
+      <h1>Listado de Registros de Asistencia Administrativa</h1>
+      <a class="logout-link" href="/logout">Cerrar Sesión</a>
+    </div>
+
+    <!-- Botones de exportación -->
+    <div class="export-buttons">
+      <form action="/export/excel" method="GET">
+        <input type="hidden" name="name" value="{{ name_filter }}">
+        <input type="hidden" name="month" value="{{ month_filter }}">
+        <button type="submit">Exportar a Excel</button>
+      </form>
+      <form action="/export/pdf" method="GET">
+        <input type="hidden" name="name" value="{{ name_filter }}">
+        <input type="hidden" name="month" value="{{ month_filter }}">
+        <button type="submit">Exportar a PDF</button>
+      </form>
+    </div>
+
+    <!-- Formulario de filtros -->
+    <form class="filter-form" method="GET" action="/registros">
+      <label>Nombre:
+        <input type="text" name="name" value="{{ name_filter }}">
+      </label>
+      <label>Mes:
+        <input type="month" name="month" value="{{ month_filter }}">
+      </label>
+      <button type="submit">Filtrar</button>
+      <button type="button" id="clearFilters">Quitar Filtros</button>
+    </form>
+
+    <!-- Tabla de registros -->
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Tipo de Labor</th>
+          <th>Ingreso</th>
+          <th>Salida</th>
+          <th>Viper Cuartel</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reg in registros %}
+        <tr>
+          <td data-label="ID: ">{{ reg.id }}</td>
+          <td data-label="Nombre: ">{{ reg.nombre }}</td>
+          <td data-label="Tipo de Labor: ">{{ reg.tipo_labor }}</td>
+          <td data-label="Ingreso: ">{{ reg.fecha_hora_ingreso }}</td>
+          <td data-label="Salida: ">{{ reg.fecha_hora_salida or '' }}</td>
+          <td data-label="Viper Cuartel: ">{{ 'Sí' if reg.viper_cuartel else 'No' }}</td>
+          <td data-label="Acciones: ">
+            <div class="actions">
+              {% if reg.aprobado is none %}
+              <button class="btn-approve brand-new" data-id="{{ reg.id }}">
+                <i class="fa-solid fa-check"></i>
+              </button>
+              <button class="btn-disapprove brand-new" data-id="{{ reg.id }}">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+              {% elif reg.aprobado %}
+              <button class="btn-approve active" data-id="{{ reg.id }}">
+                <i class="fa-solid fa-check"></i>
+              </button>
+              <button class="btn-disapprove inactive" data-id="{{ reg.id }}">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+              {% else %}
+              <button class="btn-approve inactive" data-id="{{ reg.id }}">
+                <i class="fa-solid fa-check"></i>
+              </button>
+              <button class="btn-disapprove active" data-id="{{ reg.id }}">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+              {% endif %}
+              <button class="btn-delete" data-id="{{ reg.id }}">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Contenedor inferior (Selector de registros y paginación) -->
+    <div class="bottom-bar">
+      <!-- Selector de registros por página -->
+      <div class="per-page-select">
+        <label>Registros por página:
+          <select name="per_page" id="perPageSelect">
+            <option value="5" {% if per_page==5 %}selected{% endif %}>5</option>
+            <option value="10" {% if per_page==10 %}selected{% endif %}>10</option>
+            <option value="20" {% if per_page==20 %}selected{% endif %}>20</option>
+            <option value="50" {% if per_page==50 %}selected{% endif %}>50</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Paginación -->
+      <div class="pagination-container">
+        {% if page > 1 %}
+        <a href="?name={{ name_filter }}&month={{ month_filter }}&per_page={{ per_page }}&page={{ page - 1 }}">
+          Anterior
+        </a>
+        {% endif %}
+        <span>Página {{ page }} de {{ total_pages }}</span>
+        {% if page < total_pages %} <a
+          href="?name={{ name_filter }}&month={{ month_filter }}&per_page={{ per_page }}&page={{ page + 1 }}">
+          Siguiente
+          </a>
+          {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación -->
+  <div id="confirmModal">
+    <div class="modal-content">
+      <p id="confirmMessage"></p>
+      <div id="confirmButtons">
+        <button id="confirmNo">No</button>
+        <button id="confirmYes">Sí</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de mensajes (éxito/error) -->
+  <div id="messageModal">
+    <div class="modal-content">
+      <span id="messageClose">&times;</span>
+      <h2 id="messageTitle"></h2>
+      <p id="messageBody"></p>
+      <button id="messageOkBtn">Aceptar</button>
+    </div>
+  </div>
+
+  <script>
+    // ======================
+    // EVENTOS PARA LAS ACCIONES
+    // ======================
+    // 1) Aprobar
+    document.querySelectorAll('.btn-approve').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const registroId = this.dataset.id;
+        showConfirmModal("¿Deseas aprobar este registro?", (confirm) => {
+          if (confirm) {
+            fetch(`/aprobar/${registroId}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ aprobado: true })
+            })
+              .then(res => res.json())
+              .then(data => {
+                if (data.success) {
+                  showToast("Registro aprobado con éxito", "success");
+                  // Actualizar estilo en la interfaz
+                  this.classList.remove('inactive', 'brand-new');
+                  this.classList.add('active');
+                  const disBtn = this.parentNode.querySelector('.btn-disapprove');
+                  disBtn.classList.remove('active', 'brand-new');
+                  disBtn.classList.add('inactive');
+                } else {
+                  showToast("Error al aprobar", "error");
+                }
+              })
+              .catch(err => {
+                console.error(err);
+                showToast("Error de red al aprobar", "error");
+              });
+          }
+        });
+      });
+    });
+
+    // 2) Desaprobar
+    document.querySelectorAll('.btn-disapprove').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const registroId = this.dataset.id;
+        showConfirmModal("¿Deseas desaprobar este registro?", (confirm) => {
+          if (confirm) {
+            fetch(`/aprobar/${registroId}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ aprobado: false })
+            })
+              .then(res => res.json())
+              .then(data => {
+                if (data.success) {
+                  showToast("Registro desaprobado con éxito", "success");
+                  // Actualizar estilo en la interfaz
+                  this.classList.remove('inactive', 'brand-new');
+                  this.classList.add('active');
+                  const appBtn = this.parentNode.querySelector('.btn-approve');
+                  appBtn.classList.remove('active', 'brand-new');
+                  appBtn.classList.add('inactive');
+                } else {
+                  showToast("Error al desaprobar", "error");
+                }
+              })
+              .catch(err => {
+                console.error(err);
+                showToast("Error de red al desaprobar", "error");
+              });
+          }
+        });
+      });
+    });
+
+    // 3) Eliminar
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const registroId = this.dataset.id;
+        showConfirmModal("¿Seguro que deseas eliminar este registro?", (confirm) => {
+          if (confirm) {
+            fetch(`/eliminar/${registroId}`, { method: 'DELETE' })
+              .then(res => res.json())
+              .then(data => {
+                if (data.success) {
+                  showToast("Registro eliminado con éxito", "success");
+                  // Eliminar la fila del DOM
+                  const row = this.closest('tr');
+                  row.parentNode.removeChild(row);
+                } else {
+                  showToast("Error al eliminar", "error");
+                }
+              })
+              .catch(err => {
+                console.error(err);
+                showToast("Error de red al eliminar", "error");
+              });
+          }
+        });
+      });
+    });
+
+    // Botón "Quitar Filtros"
+    document.getElementById('clearFilters').addEventListener('click', function () {
+      window.location.href = '/registros';
+    });
+
+    // Selector "Registros por página"
+    document.getElementById('perPageSelect').addEventListener('change', function () {
+      const perPage = this.value;
+      const url = new URL(window.location.href);
+      url.searchParams.set("per_page", perPage);
+      url.searchParams.set("page", 1);
+      window.location.href = url.toString();
+    });
+
+    // ======================
+    // FUNCIONES DE MODAL Y TOAST
+    // ======================
+    const confirmModal = document.getElementById('confirmModal');
+    const confirmMessage = document.getElementById('confirmMessage');
+    const confirmYes = document.getElementById('confirmYes');
+    const confirmNo = document.getElementById('confirmNo');
+    let actionCallback = null;
+
+    function showConfirmModal(message, callback) {
+      confirmMessage.textContent = message;
+      confirmModal.style.display = 'block';
+      actionCallback = callback;
+    }
+
+    function hideConfirmModal() {
+      confirmModal.style.display = 'none';
+    }
+
+    confirmYes.addEventListener('click', () => {
+      hideConfirmModal();
+      if (actionCallback) actionCallback(true);
+    });
+
+    confirmNo.addEventListener('click', () => {
+      hideConfirmModal();
+      if (actionCallback) actionCallback(false);
+    });
+
+    // Toast
+    function showToast(message, type = "success") {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toastMessage');
+      toastMessage.textContent = message;
+      if (type === "success") {
+        toast.style.background = "#28a745";
+      } else if (type === "error") {
+        toast.style.background = "#dc3545";
+      } else {
+        toast.style.background = "#6c757d";
+      }
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    // Modal de mensajes
+    const messageModal = document.getElementById('messageModal');
+    const messageClose = document.getElementById('messageClose');
+    const messageOkBtn = document.getElementById('messageOkBtn');
+
+    function showMessageModal(title, body, callback) {
+      document.getElementById('messageTitle').textContent = title;
+      document.getElementById('messageBody').textContent = body;
+      messageModal.style.display = 'block';
+      messageOkBtn.onclick = function () {
+        messageModal.style.display = 'none';
+        if (callback) callback();
+      };
+      messageClose.onclick = function () {
+        messageModal.style.display = 'none';
+      };
+      window.addEventListener('click', function (e) {
+        if (e.target === messageModal) {
+          messageModal.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>
